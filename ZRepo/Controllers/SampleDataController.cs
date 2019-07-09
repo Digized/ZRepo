@@ -22,12 +22,11 @@ namespace ZRepo.Controllers
         };
 
         [HttpGet("[action]")]
-        public IEnumerable<string> WeatherForecasts()
+        public IEnumerable<Object>  WeatherForecasts()
         {
             var rng = new Random();
-            var l = new List<string>();
-            l.Add(gitCore.RepoExists("ZRepo"));
-            return l;
+            var l = new List<bool>();
+            return gitCore.generateTree("ZRepo");
         }
 
         public class WeatherForecast
