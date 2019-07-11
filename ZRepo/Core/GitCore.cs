@@ -23,6 +23,11 @@ namespace ZRepo.Core
             repoSettings = settings.Value;
         }
 
+        public string[] GetRepos()
+        {
+            return Directory.GetDirectories(this.repoSettings.Root);
+        }
+
 
         public bool RepoExists(string repoName)
         {

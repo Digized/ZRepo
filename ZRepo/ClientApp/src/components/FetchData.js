@@ -12,7 +12,6 @@ export class FetchData extends Component {
       .then(data => {
         console.log(data);
         console.timeEnd("test");
-        this.setState({ forecasts: data, loading: false });
       });
   }
 
