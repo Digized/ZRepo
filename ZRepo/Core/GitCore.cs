@@ -29,20 +29,36 @@ namespace ZRepo.Core
         }
 
 
-        public bool RepoExists(string repoName)
+        private void validateRepo(string path)
         {
-            var path = Path.Combine(repoSettings.Root, repoName);
-            return Directory.Exists(path);
+            if (!Directory.Exists(Path.Combine(path, ".git")))
+            {
+                throw new DirectoryNotFoundException();
+            }
+        }
+
+        public string GetFile(string repoName, string path)
+        {
+            var basePath = Path.Combine(repoSettings.Root, repoName);
+            validateRepo(basePath);
+            var fullPath = Path.Combine(basePath, path);
+            if (Directory.Exists(fullPath))
+            {
+                return "FOLDER";
+            }
+
+            if (File.Exists(fullPath))
+            {
+                return File.ReadAllText(fullPath);
+            }
+
+            return "";
         }
 
         public IEnumerable<FileTree> generateTree(string repoName)
         {
             var path = Path.Combine(repoSettings.Root, repoName);
-            if (!Directory.Exists(Path.Combine(path, ".git")))
-            {
-                throw new DirectoryNotFoundException();
-            }
-
+            validateRepo(path);
             IEnumerable<FileTree> root = new List<FileTree>();
             using (var repo = new Repository(path))
             {

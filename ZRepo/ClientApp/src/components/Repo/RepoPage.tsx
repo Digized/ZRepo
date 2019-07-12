@@ -1,20 +1,21 @@
 import React from "react";
-import { FileTree } from "./FileTree.component";
+import { FileTree } from "./FileTree/FileTree.component";
 import './RepoPage.css';
 import { Row, Col } from "reactstrap";
-import { Home } from "../Home";
-import { string } from "prop-types";
+import { match, Route } from "react-router";
+import { FileViewer } from "./FileViewer/FileViewer";
 
-export const RepoPage: React.FC<any> = (repo: { match: { params: { [key: string]: string } } }) => {
-    console.log(repo.match.params);
+export const RepoPage: React.FC<{ match: match<{ reponame: string }> }> = (props) => {
     return (
         <div className={"RepoPage"}>
             <Row>
                 <Col xs={4}>
-                    <FileTree repo={repo.match.params.reponame} />
+                    <div style={{ overflow: 'auto' }}>
+                        <FileTree baseUrl={`${props.match.url}`} repo={props.match.params.reponame} />
+                    </div>
                 </Col>
                 <Col>
-                    <Home />
+                    <Route path={`${props.match.path}/:fileurl*`} component={FileViewer} />
                 </Col>
             </Row>
         </div>

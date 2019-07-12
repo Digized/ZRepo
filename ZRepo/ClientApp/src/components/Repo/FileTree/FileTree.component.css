@@ -1,0 +1,14 @@
+.FileTree ul {
+  padding-inline-start: 20px;
+  list-style: none;
+}
+
+.FileTreeItem {
+  cursor: pointer;
+  padding: 2px 10px;
+}
+
+.FileTreeItem:hover {
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+}

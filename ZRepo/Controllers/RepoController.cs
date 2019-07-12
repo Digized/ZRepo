@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using ZRepo.Core;
 
@@ -12,14 +13,26 @@ namespace ZRepo.Controllers
             this.gitCore = gitCore;
         }
 
-        [Route("api/repo/{repo}/tree")]
-        public ActionResult FileTree(string repo)
+        [Route("api/repo/tree/{repo}")]
+        public IActionResult FileTree(string repo)
         {
             if (repo == null)
             {
                 return BadRequest("No Repo Specified");
             }
             return Json(gitCore.generateTree(repo));
+
+        }
+
+
+        [Route("api/repo/file/{repo}/{*filePath}")]
+        public IActionResult FileTree(string repo, string filePath)
+        {
+            if (repo == null)
+            {
+                return BadRequest("No Repo Specified");
+            }
+            return Json(gitCore.GetFile(repo, filePath));
 
         }
     }

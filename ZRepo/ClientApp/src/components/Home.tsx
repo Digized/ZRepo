@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
+import { match } from 'react-router';
 
-export class Home extends Component {
+export class Home extends Component<{ match: match<{ reponame: string, filepath: string }> }> {
   static displayName = Home.name;
 
-  render () {
+  render() {
+    console.log(this.props.match.params);
     return (
       <div>
         <h1>Hello, world!</h1>
