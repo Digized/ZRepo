@@ -35,7 +35,7 @@ export class FileViewer extends Component<{ match: match<{ reponame: string, fil
         console.log(this.props.match.params);
         return (
             <div>
-                <SyntaxHighlighter language="typescript">
+                <SyntaxHighlighter language="typescript" showLineNumbers>
                     {this.state.data}
                 </SyntaxHighlighter>
             </div>
