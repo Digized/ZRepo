@@ -19,6 +19,9 @@ namespace ZRepo.Core
         {
             this.logger = logger;
             repoSettings = settings.Value;
+
+            Directory.CreateDirectory(repoSettings.Root);
+
         }
 
         public string[] GetRepos()
