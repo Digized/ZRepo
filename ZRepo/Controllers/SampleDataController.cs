@@ -26,7 +26,7 @@ namespace ZRepo.Controllers
         {
             var rng = new Random();
             var l = new List<bool>();
-            return gitCore.generateTree("ZRepo");
+            return gitCore.GenerateTree("ZRepo");
         }
 
         public class WeatherForecast

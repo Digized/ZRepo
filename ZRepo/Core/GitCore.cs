@@ -1,10 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using LibGit2Sharp;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -29,7 +27,7 @@ namespace ZRepo.Core
         }
 
 
-        private void validateRepo(string path)
+        private static void ValidateRepo(string path)
         {
             if (!Directory.Exists(Path.Combine(path, ".git")))
             {
@@ -40,7 +38,7 @@ namespace ZRepo.Core
         public string GetFile(string repoName, string path)
         {
             var basePath = Path.Combine(repoSettings.Root, repoName);
-            validateRepo(basePath);
+            ValidateRepo(basePath);
             var fullPath = Path.Combine(basePath, path);
             if (Directory.Exists(fullPath))
             {
@@ -55,14 +53,13 @@ namespace ZRepo.Core
             return "";
         }
 
-        public IEnumerable<FileTree> generateTree(string repoName)
+        public IEnumerable<FileTree> GenerateTree(string repoName)
         {
             var path = Path.Combine(repoSettings.Root, repoName);
-            validateRepo(path);
-            IEnumerable<FileTree> root = new List<FileTree>();
+            ValidateRepo(path);
+            IEnumerable<FileTree> root;
             using (var repo = new Repository(path))
             {
-
                 var tree = repo.Lookup("master").Peel<Tree>();
                 root = Task.WhenAll(tree.Select(async item => await _generateTree(repoName, item))).Result;
             }
@@ -70,32 +67,6 @@ namespace ZRepo.Core
 
             return root;
 
-        }
-
-        private async Task<FileTree> _generateTree(string path, string @base)
-        {
-            var file = new FileTree();
-            var fi = new FileInfo(path);
-            file.RelativePath = Path.Combine(@base, Path.GetFileName(path));
-
-            if (Directory.Exists(path))
-            {
-                var fileList = Directory.GetFileSystemEntries(path);
-
-                var subItems = await Task.WhenAll(fileList.Select(async item => await _generateTree(item, file.RelativePath)));
-                file.size = subItems.Sum(item => item.size);
-                file.subItems = subItems;
-                file.type = FileType.Folder;
-            }
-            if (File.Exists(path))
-            {
-                file.type = FileType.File;
-                file.Extension = fi.Extension;
-                file.size = fi.Length;
-
-            }
-            file.Name = fi.Name;
-            return file;
         }
 
         private async Task<FileTree> _generateTree(string parent, TreeEntry tree)

@@ -20,7 +20,7 @@ namespace ZRepo.Controllers
             {
                 return BadRequest("No Repo Specified");
             }
-            return Json(gitCore.generateTree(repo));
+            return Json(gitCore.GenerateTree(repo));
 
         }
 
