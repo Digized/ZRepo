@@ -58,8 +58,8 @@ export class FileTree extends React.Component<any, { tree: IFileTree[] }> {
             <ul>
                 {data.map((item, i) => {
                     return (
-                        <FileTreeItem key={item.relativePath} file={item} baseUrl={baseUrl}>
-                            {item.subItems && this.generateFileTree(item.subItems, `${baseUrl}/${item.relativePath}`)}
+                        <FileTreeItem key={item.relativePath} file={item}>
+                            {item.subItems && this.generateFileTree(item.subItems, `${item.relativePath}`)}
                         </FileTreeItem>
                     );
                 })}
@@ -69,9 +69,9 @@ export class FileTree extends React.Component<any, { tree: IFileTree[] }> {
 }
 
 
-class FileTreeItem extends Component<{ file: IFileTree, baseUrl: string }, { isOpen?: boolean }> {
+class FileTreeItem extends Component<{ file: IFileTree }, { isOpen?: boolean }> {
 
-    constructor(prop: { file: IFileTree, baseUrl: string }) {
+    constructor(prop: { file: IFileTree }) {
         super(prop);
         this.state = {
             isOpen: prop.file.type === "folder" ? false : undefined
@@ -82,7 +82,7 @@ class FileTreeItem extends Component<{ file: IFileTree, baseUrl: string }, { isO
         return (
             <li>
                 <div className="FileTreeItem">
-                    {this.getIcon()} <Link to={`${this.props.baseUrl}/${this.props.file.relativePath}`}>{this.props.file.name}</Link>
+                    {this.getIcon()} <Link to={`/repo/${this.props.file.relativePath}`}>{this.props.file.name}</Link>
                 </div>
                 {this.state.isOpen && this.props.children}
             </li >

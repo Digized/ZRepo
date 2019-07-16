@@ -14,7 +14,7 @@ export const RepoPage: React.FC<{ match: match<{ reponame: string }> }> = (props
                         <FileTree baseUrl={`${props.match.url}`} repo={props.match.params.reponame} />
                     </div>
                 </Col>
-                <Col>
+                <Col xs={8}>
                     <Route path={`${props.match.path}/:fileurl*`} component={FileViewer} />
                 </Col>
             </Row>

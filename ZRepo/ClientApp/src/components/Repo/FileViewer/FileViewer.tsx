@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { match } from "react-router";
-import SyntaxHighlighter from "react-syntax-highlighter";
-
+import MonacoEditor from "react-monaco-editor";
 export class FileViewer extends Component<{ match: match<{ reponame: string, fileurl: string }> }, any> {
 
     constructor(props: any) {
@@ -35,10 +34,16 @@ export class FileViewer extends Component<{ match: match<{ reponame: string, fil
         console.log(this.props.match.params);
         return (
             <div>
-                <SyntaxHighlighter language="typescript" showLineNumbers>
-                    {this.state.data}
-                </SyntaxHighlighter>
+                <MonacoEditor value={this.state.data} language={this.getFileType(this.props.match.params.fileurl)} height="90vh" />
             </div>
         )
+    }
+
+    getFileType(path: string) {
+        const fileType = path.split("/").reverse()[0].split(".").pop();
+        console.log(fileType);
+        if (fileType === 'tsx' || fileType === 'ts') {
+            return 'typescript';
+        }
     }
 }

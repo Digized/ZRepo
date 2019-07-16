@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -64,7 +65,7 @@ namespace ZRepo.Core
             using (var repo = new Repository(path))
             {
                 var tree = repo.Lookup("master").Peel<Tree>();
-                root = Task.WhenAll(tree.Select(async item => await _generateTree(repoName, item))).Result;
+                root = Task.WhenAll(tree.Select(async item => await _generateTree(item, repoName))).Result;
             }
 
 
@@ -72,19 +73,24 @@ namespace ZRepo.Core
 
         }
 
-        private async Task<FileTree> _generateTree(string parent, TreeEntry tree)
+        private async Task<FileTree> _generateTree(TreeEntry tree, string parent = null)
         {
             var file = new FileTree();
-            var RelativePath = Path.Combine(parent, tree.Path);
+            var RelativePath = tree.Path;
+            if (parent != null)
+            {
+                RelativePath = Path.Combine(parent, RelativePath);
+            }
             var path = Path.Combine(repoSettings.Root, RelativePath);
             var fi = new FileInfo(path);
-            file.RelativePath = tree.Path;
-
+            logger.LogInformation(file.RelativePath);
+            logger.LogInformation(Path.DirectorySeparatorChar + "");
+            file.RelativePath = string.Join("/", RelativePath.Split(Path.DirectorySeparatorChar));
             if (tree.TargetType == TreeEntryTargetType.Tree)
             {
                 var treeItems = tree.Target.Peel<Tree>();
-                var subItems = await Task.WhenAll(treeItems.Select(async item => await _generateTree(RelativePath, item)));
-                file.size = subItems.Sum(item => item.size);
+                var subItems = await Task.WhenAll(treeItems.Select(async item => await _generateTree(item, RelativePath)));
+                file.byteSize = subItems.Sum(item => item.byteSize);
                 file.subItems = subItems;
                 file.type = FileType.Folder;
             }
@@ -92,13 +98,16 @@ namespace ZRepo.Core
             {
                 file.type = FileType.File;
                 file.Extension = fi.Extension;
-                file.size = fi.Length;
+                file.byteSize = fi.Length;
             }
             file.Name = fi.Name;
             return file;
         }
 
+
     }
+
+
     public enum FileType
     {
         File,
@@ -111,7 +120,14 @@ namespace ZRepo.Core
         public string Extension { get; set; }
         public string Name { get; set; }
         public string RelativePath { get; set; }
-        public long size { get; set; }
+        public long byteSize { get; set; }
+        public string Size
+        {
+            get
+            {
+                return Util.FormatBytes(this.byteSize);
+            }
+        }
         public FileType type { get; set; }
         public IEnumerable<FileTree> subItems { get; set; }
 
