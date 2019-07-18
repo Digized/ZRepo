@@ -9,12 +9,12 @@ export const RepoPage: React.FC<{ match: match<{ reponame: string }> }> = (props
     return (
         <div className={"RepoPage"}>
             <Row>
-                <Col xs={4}>
+                <Col xs={3}>
                     <div style={{ overflow: 'auto' }}>
                         <FileTree baseUrl={`${props.match.url}`} repo={props.match.params.reponame} />
                     </div>
                 </Col>
-                <Col xs={8}>
+                <Col xs={9}>
                     <Route path={`${props.match.path}/:fileurl*`} component={FileViewer} />
                 </Col>
             </Row>

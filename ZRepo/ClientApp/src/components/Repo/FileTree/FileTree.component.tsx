@@ -2,16 +2,7 @@ import React, { FC, Component } from "react";
 import "./FileTree.component.css";
 import { FaFile, FaFolder, FaFolderOpen } from "react-icons/fa";
 import { Link } from 'react-router-dom';
-
-interface IFileTree {
-    extension?: string;
-    name: string;
-    relativePath: string;
-    size: number;
-    type: 'file' | 'folder'
-    subItems?: IFileTree[]
-}
-
+import { IFileTree } from "../types";
 export class FileTree extends React.Component<any, { tree: IFileTree[] }> {
 
 
