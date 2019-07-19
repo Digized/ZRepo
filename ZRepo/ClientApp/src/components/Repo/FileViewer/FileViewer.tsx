@@ -61,8 +61,8 @@ export class FileViewer extends Component<Props, State> {
                 <Editor
                     value={file.fileContent}
                     language={FILETYPES[file.fileExtension]}
-                    height="90vh"
-                    theme={"light"}
+                    height="80vh"
+                    theme={"dark"}
                     options={
                         {
                             readOnly: true
@@ -110,7 +110,7 @@ export class FileViewer extends Component<Props, State> {
                 _crumbs.push(path[index]);
                 crumbs.push(
                     <BreadcrumbItem key={path[index]}>
-                        <Link to={`/repo/${this.props.match.params.reponame}/${_crumbs.join("/")}`}>{path[index]}</Link>
+                        <Link to={`/repo/${_crumbs.join("/")}`}>{path[index]}</Link>
                     </BreadcrumbItem>
                 );
             }
