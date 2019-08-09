@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import { match } from "react-router";
 import Editor from "@monaco-editor/react";
-import { Breadcrumb, BreadcrumbItem, ListGroup, ListGroupItem } from 'reactstrap';
+import Markdown from "react-markdown";
+import {
+    Breadcrumb, BreadcrumbItem, ListGroup, ListGroupItem, Nav, NavItem, TabContent, TabPane, NavLink, Row, Col
+} from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { RepoFile, IFileTree, isIFileTree, isRepoFile } from '../types';
 import { isArray } from 'util';
@@ -14,13 +17,11 @@ interface Props {
 interface State {
     file?: RepoFile;
     tree?: IFileTree;
+    selectedTab?: string;
 }
 export class FileViewer extends Component<Props, State> {
+    state: State = {
 
-    constructor(props: Props) {
-        super(props);
-        this.state = {}
-        this.fetchFile();
     }
 
     componentDidUpdate(prevProp: Props) {
@@ -28,7 +29,16 @@ export class FileViewer extends Component<Props, State> {
             && prevProp.match.params.fileurl === this.props.match.params.fileurl) {
             return;
         }
-        this.setState({ file: undefined, tree: undefined })
+        this.resetData();
+    }
+
+    componentDidMount() {
+        this.resetData();
+
+    }
+
+    resetData() {
+        this.setState({ file: undefined, tree: undefined, selectedTab: undefined })
         this.fetchFile();
         this.fetchTree();
     }
@@ -36,9 +46,8 @@ export class FileViewer extends Component<Props, State> {
     async fetchFile() {
         const response = await fetch(`api/repo/${this.props.match.params.reponame}/file/${this.props.match.params.fileurl || ''}`)
         const data = await response.json();
-        console.log(data);
         if (data) {
-            this.setState({ file: data });
+            this.setState({ file: data, selectedTab: this.state.selectedTab || "renderFile" });
         }
     }
 
@@ -46,13 +55,10 @@ export class FileViewer extends Component<Props, State> {
         const response = await fetch(`api/repo/${this.props.match.params.reponame}/tree/${this.props.match.params.fileurl || ''}`)
         const data = await response.json();
         if (data) {
-            this.setState({ tree: data });
+            this.setState({ tree: data, selectedTab: this.state.selectedTab || "renderFolder" });
         }
     }
 
-    editorDidMount(editor: any, monaco: any) {
-        console.log(monaco);
-    }
 
     renderFile() {
         const { file } = this.state;
@@ -61,24 +67,35 @@ export class FileViewer extends Component<Props, State> {
                 <Editor
                     value={file.fileContent}
                     language={FILETYPES[file.fileExtension]}
-                    height="80vh"
-                    theme={"dark"}
+                    height="85vh"
+                    theme={"light"}
                     options={
                         {
                             readOnly: true
                         }
                     }
-                    editorDidMount={this.editorDidMount} />
+                />
             );
         }
         return <> </>;
 
     }
 
+    renderMD() {
+        const { file } = this.state;
+        if (file && isRepoFile(file)) {
+            return (
+                <Markdown
+                    source={file.fileContent}
+                />
+            );
+        }
+        return <> </>;
+
+    }
 
     renderFolder() {
         const { tree } = this.state;
-
         if (!tree || !isArray(tree) || tree.length == undefined || tree.length < 1 || !isIFileTree(tree[0])) {
             return <></>
         }
@@ -132,9 +149,42 @@ export class FileViewer extends Component<Props, State> {
     render() {
         return <div>
             {this.crumbs()}
-            {this.renderFolder()}
-            {this.renderFile()}
-        </div>
+            <Nav tabs>
+                {this.state.file &&
+                    <NavItem>
+                        <NavLink active={this.state.selectedTab === 'renderFile'} onClick={() => this.setState({ selectedTab: "renderFile" })} >
+                            File
+                    </NavLink>
+                    </NavItem>
+                }
+                {this.state.tree &&
+                    <NavItem >
+                        <NavLink active={this.state.selectedTab === 'renderFolder'} onClick={() => this.setState({ selectedTab: "renderFolder" })} >
+                            Folder
+                    </NavLink>
+                    </NavItem>
+                }
+                {this.state.file && isRepoFile(this.state.file) && this.state.file.fileExtension === ".md" &&
+                    <NavItem >
+                        <NavLink active={this.state.selectedTab === 'renderMD'} onClick={() => this.setState({ selectedTab: "renderMD" })} >
+                            MD
+                    </NavLink>
+                    </NavItem>
+                }
+            </Nav>
+
+            <TabContent activeTab={this.state.selectedTab} >
+                <TabPane tabId="renderFolder">
+                    {this.renderFolder()}
+                </TabPane>
+                <TabPane tabId="renderFile">
+                    {this.renderFile()}
+                </TabPane>
+                <TabPane tabId="renderMD">
+                    {this.renderMD()}
+                </TabPane>
+            </TabContent>
+        </div >
     }
 }
 
@@ -149,5 +199,6 @@ const FILETYPES: { [key: string]: string } = {
     '.ts': 'typescript',
     '.js': 'javascript',
     '.jsx': 'javascript',
-    '.tsx': 'typescript'
+    '.tsx': 'typescript',
+    '.html': 'html'
 }

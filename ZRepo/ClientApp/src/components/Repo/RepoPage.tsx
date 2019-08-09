@@ -10,7 +10,7 @@ export const RepoPage: React.FC<{ match: match<{ reponame: string }> }> = (props
         <div className={"RepoPage"}>
             <Row>
                 <Col xs={3}>
-                    <div style={{ overflow: 'auto' }}>
+                    <div style={{ overflow: 'auto', height: "100vh" }}>
                         <FileTree baseUrl={`${props.match.url}`} repo={props.match.params.reponame} />
                     </div>
                 </Col>
