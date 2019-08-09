@@ -29,7 +29,7 @@ export class FileTree extends React.Component<any, { tree: IFileTree[] }> {
 
 
     fetchRepoTree() {
-        fetch(`api/repo/tree/${this.props.repo}`)
+        fetch(`api/repo/${this.props.repo}/tree`)
             .then(response => response.json())
             .then(data => {
                 this.setState({ tree: data });
@@ -46,15 +46,15 @@ export class FileTree extends React.Component<any, { tree: IFileTree[] }> {
 
     generateFileTree(data: IFileTree[], baseUrl: string) {
         return (
-            <ul>
-                {data.map((item, i) => {
-                    return (
-                        <FileTreeItem key={item.relativePath} file={item}>
-                            {item.subItems && this.generateFileTree(item.subItems, `${item.relativePath}`)}
-                        </FileTreeItem>
-                    );
-                })}
-            </ul>
+                <ul>
+                    {data.map((item, i) => {
+                        return (
+                            <FileTreeItem key={item.relativePath} file={item}>
+                                {item.subItems && this.generateFileTree(item.subItems, `${item.relativePath}`)}
+                            </FileTreeItem>
+                        );
+                    })}
+                </ul>
         )
     }
 }
@@ -65,7 +65,7 @@ class FileTreeItem extends Component<{ file: IFileTree }, { isOpen?: boolean }> 
     constructor(prop: { file: IFileTree }) {
         super(prop);
         this.state = {
-            isOpen: prop.file.type === "folder" ? false : undefined
+            isOpen: prop.file.type === "folder" ? true : undefined
         }
     }
 

@@ -34,7 +34,7 @@ export class FileViewer extends Component<Props, State> {
     }
 
     async fetchFile() {
-        const response = await fetch(`api/repo/file/${this.props.match.params.reponame}/${this.props.match.params.fileurl || ''}`)
+        const response = await fetch(`api/repo/${this.props.match.params.reponame}/file/${this.props.match.params.fileurl || ''}`)
         const data = await response.json();
         console.log(data);
         if (data) {
@@ -43,7 +43,7 @@ export class FileViewer extends Component<Props, State> {
     }
 
     async fetchTree() {
-        const response = await fetch(`api/repo/tree/${this.props.match.params.reponame}/${this.props.match.params.fileurl || ''}`)
+        const response = await fetch(`api/repo/${this.props.match.params.reponame}/tree/${this.props.match.params.fileurl || ''}`)
         const data = await response.json();
         if (data) {
             this.setState({ tree: data });
@@ -144,7 +144,10 @@ const FILETYPES: { [key: string]: string } = {
     '.txt': 'plaintext',
     '.gitignore': 'plaintext',
     '.cs': 'csharp',
+    '.css': 'css',
+    '.scss': 'sass',
     '.ts': 'typescript',
+    '.js': 'javascript',
     '.jsx': 'javascript',
     '.tsx': 'typescript'
 }

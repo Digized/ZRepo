@@ -25,9 +25,9 @@ namespace ZRepo.Core
 
         }
 
-        public string[] GetRepos()
+        public IEnumerable<string> GetRepos()
         {
-            return Directory.GetDirectories(this.repoSettings.Root);
+            return Directory.GetDirectories(this.repoSettings.Root).Select(item => Path.GetRelativePath(repoSettings.Root, item));
         }
 
 

@@ -13,7 +13,13 @@ namespace ZRepo.Controllers
             this.gitCore = gitCore;
         }
 
-        [Route("api/repo/tree/{repo}/{*filePath}")]
+        [Route("api/repo")]
+        public IActionResult GetRepos()
+        {
+            return Json(gitCore.GetRepos());
+        }
+
+        [Route("api/repo/{repo}/tree/{*filePath}")]
         public IActionResult GetTree(string repo, string filePath)
         {
             if (repo == null)
@@ -25,7 +31,7 @@ namespace ZRepo.Controllers
         }
 
 
-        [Route("api/repo/file/{repo}/{*filePath}")]
+        [Route("api/repo/{repo}/file/{*filePath}")]
         public IActionResult GetFile(string repo, string filePath)
         {
             if (repo == null)
