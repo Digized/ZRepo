@@ -33,7 +33,7 @@
     "@types/react-router-dom": "^4.3.4",
     "@types/react-syntax-highlighter": "^10.2.1",
     "@types/reactstrap": "^8.0.1",
-    "ajv": "^6.0.0",
+    "ajv": "^6.12.3",
     "cross-env": "^5.2.0"
   },
   "eslintConfig": {
